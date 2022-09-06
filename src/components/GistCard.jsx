@@ -1,9 +1,33 @@
-import * as React from 'react';
-import {Avatar, Badge, Card, CardContent, Chip, Grid, Typography} from "@mui/material";
+import React, {useEffect, useState} from 'react';
+import {Avatar, Badge, Box, Card, CardContent, Chip, Grid, Typography} from "@mui/material";
 
+import * as GistService from '../services/GistService';
 
 function GistCard(props){
 
+    const [forks,setForks]=useState('');
+
+    useEffect(()=>{
+        GistService.getForksForGist(props.id)
+            .then(result=>{
+                if(result.data===200){
+                    if(result.data.length>0){
+                        result.data.sort(function(a,b) {
+                            return new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+                        });
+                        let latestForks= result.data[0].owner.login;
+                        if(result.data.length>1)
+                            latestForks+=', '+result.data[1].owner.login;
+                        if(result.data.length>2)
+                            latestForks+=', '+result.data[2].owner.login;
+
+                        setForks(latestForks);
+                    }
+                }
+            })
+            .catch(err=>{
+            })
+    },[])
 
     const handleClickView = ()=>{
         console.log("ID: ", props.id);
@@ -25,8 +49,15 @@ function GistCard(props){
                 </Badge>
             </CardContent>
             <CardContent sx={{height:80}}>
-                <Typography gutterBottom variant="subtitle3" component="div" color="primary" textAlign="center">
-                    {props.description!=='' ? props.description : 'No description'}
+                <Typography gutterBottom variant="subtitle1" component="div" color="primary" textAlign="center">
+                    <Box sx={{ fontWeight: 'bold', m: 1 }}>{props.description!=='' ? props.description : 'No description'}</Box>
+
+                </Typography>
+            </CardContent>
+
+            <CardContent>
+                <Typography gutterBottom variant="subtitle3" component="div" color="primary" textAlign="left">
+                    Latest forks: {forks!=='' ? forks : '-'}
                 </Typography>
             </CardContent>
 

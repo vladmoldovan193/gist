@@ -21,6 +21,27 @@ const getListGistsForUser = async (username) =>{
 
 }
 
+const getForksForGist = async (id) =>{
+
+    return new Promise((resolve,reject)=>{
+
+        axios.get(Config.api+"/gists/"+id+"/forks",{
+            headers: {
+                'Accept': 'application/vnd.github+json'
+            }
+        })
+            .then(result=>{
+                resolve(result);
+            })
+            .catch(err=>{
+                reject(err);
+            })
+
+    })
+
+}
+
 export{
-    getListGistsForUser
+    getListGistsForUser,
+    getForksForGist
 }

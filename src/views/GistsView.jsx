@@ -1,7 +1,7 @@
 
 import React, {useEffect, useState} from 'react';
 import {Button, Grid, TextField} from "@mui/material";
-import * as GistService from '../services/GIstService';
+import * as GistService from '../services/GistService';
 import GistCard from "../components/GistCard";
 
 function GistsView(){
@@ -60,7 +60,6 @@ function GistsView(){
                 {
                     gistList.length>0 ?
                         gistList.map(element=>{
-                            console.log("ELEMENT: ",element);
                             return  <Grid item xs={12} md={6} lg={3} sx={{maxHeight:479}}>
                                         <GistCard image={element.owner.avatar_url} description={element.description} languages={element.languages} id={element.id} />
                                     </Grid>
