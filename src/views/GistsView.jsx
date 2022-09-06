@@ -16,8 +16,20 @@ function GistsView(){
     const handleSearch = () =>{
         GistService.getListGistsForUser(username)
             .then(result=>{
-                console.log("Result: ",result);
                 if(result.status === 200){
+                    result.data.map(item=>{
+                        let languages=[];
+                        Object.entries(item.files).map(file=>{
+                            if(!languages.includes(file[1].language))
+                            {
+
+                                languages.push(file[1].language);
+                            }
+                            return file;
+                        })
+                        item.languages=languages;
+                        return item;
+                    })
                     setGistList(result.data);
                 }
             })
@@ -48,8 +60,9 @@ function GistsView(){
                 {
                     gistList.length>0 ?
                         gistList.map(element=>{
+                            console.log("ELEMENT: ",element);
                             return  <Grid item xs={12} md={6} lg={3} sx={{maxHeight:479}}>
-                                        <GistCard image={element.owner.avatar_url} description={element.description} />
+                                        <GistCard image={element.owner.avatar_url} description={element.description} languages={element.languages} id={element.id} />
                                     </Grid>
 
                         })
