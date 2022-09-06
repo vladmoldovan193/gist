@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {Avatar, Badge, Box, Card, CardContent, Chip, Grid, Typography} from "@mui/material";
+import { useHistory } from "react-router-dom";
 
 import * as GistService from '../services/GistService';
 
@@ -7,10 +8,12 @@ function GistCard(props){
 
     const [forks,setForks]=useState('');
 
+    const history = useHistory();
+
     useEffect(()=>{
-        GistService.getForksForGist(props.id)
+        GistService.getForksForGist(props.gist.id)
             .then(result=>{
-                if(result.data===200){
+                if(result.status===200){
                     if(result.data.length>0){
                         result.data.sort(function(a,b) {
                             return new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
@@ -20,7 +23,6 @@ function GistCard(props){
                             latestForks+=', '+result.data[1].owner.login;
                         if(result.data.length>2)
                             latestForks+=', '+result.data[2].owner.login;
-
                         setForks(latestForks);
                     }
                 }
@@ -30,7 +32,7 @@ function GistCard(props){
     },[])
 
     const handleClickView = ()=>{
-        console.log("ID: ", props.id);
+        history.push('/detailed?id='+props.gist.id);
     }
 
     return(
@@ -42,7 +44,7 @@ function GistCard(props){
                     anchorOrigin={{ vertical: 'bottom', horizontal: 'right'}}
                     sx={{display:'flex', justifyContent:'center'}}
                 >
-                    <Avatar src={props.image} sx={{
+                    <Avatar src={props.gist.owner.avatar_url} sx={{
                         height:"100px",
                         width:"100px"
                     }}/>
@@ -50,7 +52,7 @@ function GistCard(props){
             </CardContent>
             <CardContent sx={{height:80}}>
                 <Typography gutterBottom variant="subtitle1" component="div" color="primary" textAlign="center">
-                    <Box sx={{ fontWeight: 'bold', m: 1 }}>{props.description!=='' ? props.description : 'No description'}</Box>
+                    <Box sx={{ fontWeight: 'bold', m: 1 }}>{props.gist.description!=='' ? props.gist.description : 'No description'}</Box>
 
                 </Typography>
             </CardContent>
@@ -71,7 +73,7 @@ function GistCard(props){
                     sx={{maxWidth:480}}
                 >
                 {
-                    props.languages.map(language=>{
+                    props.gist.languages.map(language=>{
                         return  <Grid item >
                                     <Chip label={language} color="primary"/>
                                 </Grid>

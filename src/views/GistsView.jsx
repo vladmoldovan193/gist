@@ -61,7 +61,7 @@ function GistsView(){
                     gistList.length>0 ?
                         gistList.map(element=>{
                             return  <Grid item xs={12} md={6} lg={3} sx={{maxHeight:479}}>
-                                        <GistCard image={element.owner.avatar_url} description={element.description} languages={element.languages} id={element.id} />
+                                        <GistCard gist={element} />
                                     </Grid>
 
                         })

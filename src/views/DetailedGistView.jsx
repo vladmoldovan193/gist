@@ -1,28 +1,53 @@
-import GistsView from "./GistsView";
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useMemo} from 'react';
+import {useLocation} from "react-router-dom";
+import * as GistService from '../services/GistService';
+import {Chip, Grid, Link} from "@mui/material";
 
 function DetailedGistView(){
 
-    const [state,setState] = useState("")
+    const [state,setState] = useState(null)
+
+    const { search } = useLocation();
+
+
+    const query = useMemo(() => new URLSearchParams(search), [search]);
 
     useEffect(()=>{
-        fetch("https://gist.githubusercontent.com/grodtron/4535967/raw/432a09e187bf49c2c8f121bf7d4d1937055369b2/range.sql").then((r)=>{r.text().then(d=>setState(d))})
-        // fetch('https://gist.githubusercontent.com/grodtron/4535967/raw/432a09e187bf49c2c8f121bf7d4d1937055369b2/range.sql')
-        //     .then((response) => response.json())
-        //     .then((response) => {
-        //         // now fetch the text
-        //         fetch(response.url)
-        //             .then(response2 => response2.text())
-        //             .then(response2 => {
-        //                 setState(response2)
-        //             })
-        //     })
+        GistService.getGistById(query.get("id"))
+            .then(result=>{
+                if(result.status===200){
+                   setState(result.data);
+                }
+            })
+            .catch(err=>{
+                console.log("ERR: ",err);
+            })
     },[])
 
     return(
-        <div>
-            {state}
-        </div>
+        <Grid
+            container
+            spacing={1}
+            direction="column"
+            alignItems="center"
+            justify="center"
+            sx={{paddingTop:10}}
+        >
+            {
+                state!==null ?
+                Object.entries(state.files).map(file=>{
+                    return <Grid item >
+                        <a href={file[1].raw_url}>{file[1].filename}</a>
+                    </Grid>
+
+
+
+
+                })
+
+                    : <></>
+            }
+        </Grid>
     );
 }
 export default DetailedGistView;
