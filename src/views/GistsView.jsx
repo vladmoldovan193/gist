@@ -2,11 +2,12 @@
 import React, {useEffect, useState} from 'react';
 import {Button, Grid, TextField} from "@mui/material";
 import * as GistService from '../services/GIstService';
+import GistCard from "../components/GistCard";
 
 function GistsView(){
 
-    const[username,setUserName]=useState("");
-
+    const [username,setUserName]=useState("");
+    const [gistList,setGistList]=useState([]);
 
     const handleUsernameChange = e =>{
         setUserName(e.target.value);
@@ -16,6 +17,9 @@ function GistsView(){
         GistService.getListGistsForUser(username)
             .then(result=>{
                 console.log("Result: ",result);
+                if(result.status === 200){
+                    setGistList(result.data);
+                }
             })
             .catch(err=>{
                 console.log("ERR: ",err);
@@ -38,6 +42,19 @@ function GistsView(){
                 <Button variant="contained" size="large" sx={{textTransform:'none', bgcolor:"#268991"}} onClick={handleSearch}>
                     Search
                 </Button>
+            </Grid>
+
+            <Grid container item xs={12} spacing={2}  sx={{padding:10}}>
+                {
+                    gistList.length>0 ?
+                        gistList.map(element=>{
+                            return  <Grid item xs={12} md={6} lg={3} sx={{maxHeight:479}}>
+                                        <GistCard image={element.owner.avatar_url} description={element.description} />
+                                    </Grid>
+
+                        })
+                        : null
+                }
             </Grid>
         </Grid>
     );
