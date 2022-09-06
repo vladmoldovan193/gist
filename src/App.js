@@ -1,24 +1,32 @@
-import logo from './logo.svg';
 import './App.css';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import {BrowserRouter as Router, Switch, Route} from "react-router-dom";
+import GistsView from "./views/GistsView";
+import DetailedGistView from "./views/DetailedGistView";
 
 function App() {
+
+  const theme = createTheme({
+    palette: {
+      primary: {
+        main: '#268991',
+      },
+    },
+  });
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <ThemeProvider theme={theme}>
+        <Switch>
+          <Route exact path = "/">
+              <GistsView/>
+          </Route>
+          <Route exact path = "/detailed">
+            <DetailedGistView/>
+          </Route>
+        </Switch>
+      </ThemeProvider>
+    </Router>
   );
 }
 
